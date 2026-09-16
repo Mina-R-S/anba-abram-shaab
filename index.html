@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>بوابة الشعب والأعضاء - كشافة العذراء والأنبا أبرام</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Firebase SDK Compat -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+
+    <style>
+        :root {
+            --bg-dark: #0f172a;
+            --card-bg: #1e293b;
+            --card-border: #334155;
+            --primary-blue: #2563eb;
+            --accent-blue: #38bdf8;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --danger: #ef4444;
+            --success: #10b981;
+            --warning: #f59e0b;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Cairo', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            padding-bottom: 40px;
+        }
+
+        .header-bar {
+            background-color: var(--card-bg);
+            padding: 14px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--card-border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .cover-banner {
+            width: 100%;
+            background: linear-gradient(135deg, #1e3a8a, #0284c7);
+            padding: 24px 16px;
+            text-align: center;
+            border-radius: 0 0 16px 16px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+
+        .cover-banner h1 {
+            font-size: 1.4rem;
+            margin-bottom: 4px;
+        }
+
+        .cover-banner p {
+            color: var(--accent-blue);
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .container {
+            padding: 0 16px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .tab-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 12px;
+            background-color: var(--card-bg);
+            border: 1px solid var(--card-border);
+            color: var(--text-muted);
+            border-radius: 10px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .tab-btn.active {
+            background-color: var(--primary-blue);
+            color: #fff;
+            border-color: var(--primary-blue);
+        }
+
+        .section-block {
+            background-color: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            padding: 18px;
+            margin-bottom: 16px;
+        }
+
+        .section-title {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .form-group {
+            margin-bottom: 14px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+        }
+
+        .form-control, .form-select {
+            width: 100%;
+            padding: 11px 14px;
+            background-color: var(--bg-dark);
+            border: 1px solid var(--card-border);
+            border-radius: 8px;
+            color: var(--text-main);
+            font-size: 0.95rem;
+            outline: none;
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: var(--accent-blue);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            border: none;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-size: 0.95rem;
+        }
+
+        .btn-primary { background-color: var(--primary-blue); color: #fff; }
+
+        .result-card {
+            background-color: var(--bg-dark);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            padding: 16px;
+            margin-top: 14px;
+        }
+
+        .code-box {
+            background: linear-gradient(135deg, #0284c7, #2563eb);
+            padding: 12px;
+            border-radius: 8px;
+            text-align: center;
+            margin: 10px 0;
+        }
+
+        .code-box .code-val {
+            font-size: 1.8rem;
+            font-weight: 800;
+            letter-spacing: 2px;
+        }
+
+        .stats-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 14px;
+        }
+
+        .stat-mini-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 8px;
+            padding: 12px;
+            text-align: center;
+        }
+
+        .stat-mini-card .val {
+            font-size: 1.3rem;
+            font-weight: 800;
+        }
+
+        .stat-mini-card .lbl {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .social-item {
+            background-color: var(--bg-dark);
+            border: 1px solid var(--card-border);
+            border-radius: 8px;
+            padding: 12px;
+            margin-top: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+    </style>
+</head>
+<body>
+
+    <div class="header-bar">
+        <div class="header-title">
+            <i class="fa-solid fa-cross" style="color: var(--accent-blue)"></i>
+            كشافة العذراء والأنبا أبرام
+        </div>
+        <span style="font-size:0.8rem; color:var(--accent-blue); font-weight:700;">بوابة الشعب</span>
+    </div>
+
+    <div class="container">
+        
+        <div class="cover-banner">
+            <h1>أهلاً بكم في كشافة السيدة العذراء والأنبا أبرام</h1>
+            <p>سجل بياناتك واستعلم عن الحضور وأيام الغياب</p>
+        </div>
+
+        <div class="tab-buttons">
+            <button class="tab-btn active" onclick="switchTab('query')">
+                <i class="fa-solid fa-magnifying-glass"></i> استعلام عن كودك
+            </button>
+            <button class="tab-btn" onclick="switchTab('register')">
+                <i class="fa-solid fa-user-plus"></i> تسجيل عضو جديد
+            </button>
+        </div>
+
+        <!-- قسم الاستعلام -->
+        <div id="tab-query" class="tab-content active">
+            <div class="section-block">
+                <div class="section-title">
+                    <i class="fa-solid fa-id-card" style="color: var(--accent-blue);"></i>
+                    استعلام عن الكود ومتابعة الحضور
+                </div>
+                <div class="form-group">
+                    <label class="form-label">اكتب اسمك بالكامل أو رقم التليفون أو الكود الرقمي</label>
+                    <input type="text" id="search-input" class="form-control" placeholder="أدخل الاسم أو الكود بالتحديد...">
+                </div>
+                <button class="btn btn-primary" onclick="searchMember()">
+                    <i class="fa-solid fa-search"></i> بحث
+                </button>
+
+                <div id="search-results"></div>
+            </div>
+        </div>
+
+        <!-- قسم التسجيل -->
+        <div id="tab-register" class="tab-content">
+            <div class="section-block">
+                <div class="section-title">
+                    <i class="fa-solid fa-pen-to-square" style="color: var(--success);"></i>
+                    استمارة تسجيل في الكشافة
+                </div>
+                <form id="register-form" onsubmit="handleRegistration(event)">
+                    <div class="form-group">
+                        <label class="form-label">الاسم بالكامل (ثلاثي أو رباعي) *</label>
+                        <input type="text" id="reg-name" class="form-control" required placeholder="اكتب اسمك الثلاثي/الرباعي">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">المرحلة الكشفية *</label>
+                        <select class="form-select" id="reg-stage" required>
+                            <option value="براعم">براعم</option>
+                            <option value="أشبال (أ)">أشبال (أ)</option>
+                            <option value="أشبال (ب)">أشبال (ب)</option>
+                            <option value="كشاف">كشاف</option>
+                            <option value="متقدم">متقدم</option>
+                            <option value="جوالة">جوالة</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">تاريخ الميلاد *</label>
+                        <input type="date" id="reg-dob" class="form-control" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">رقم الهاتف / رقم ولي الأمر *</label>
+                        <input type="tel" id="reg-phone" class="form-control" required placeholder="01xxxxxxxx">
+                    </div>
+
+                    <button type="submit" class="btn btn-primary" style="background-color: var(--success);">
+                        <i class="fa-solid fa-check-circle"></i> تأكيد التسجيل
+                    </button>
+                </form>
+
+                <div id="register-success"></div>
+            </div>
+        </div>
+
+        <!-- منصات التواصل -->
+        <div class="section-block">
+            <div class="section-title">
+                <i class="fa-solid fa-share-nodes" style="color: var(--accent-blue);"></i>
+                تابعنا على منصاتنا
+            </div>
+            <div class="social-item">
+                <div style="display:flex; align-items:center; gap:10px;">
+                    <i class="fa-brands fa-facebook" style="color:#1877f2; font-size:1.3rem;"></i>
+                    <strong>فيسبوك</strong>
+                </div>
+                <a href="https://www.facebook.com/share/19qm95uffo/" target="_blank" style="color:var(--accent-blue); text-decoration:none; font-weight:700;">انقر هنا</a>
+            </div>
+            <div class="social-item">
+                <div style="display:flex; align-items:center; gap:10px;">
+                    <i class="fa-brands fa-instagram" style="color:#e4405f; font-size:1.3rem;"></i>
+                    <strong>إنستغرام</strong>
+                </div>
+                <a href="https://www.instagram.com/the_scout.team?igsi=MW8wMmNjYngyd3hzdg==" target="_blank" style="color:var(--accent-blue); text-decoration:none; font-weight:700;">انقر هنا</a>
+            </div>
+            <div class="social-item">
+                <div style="display:flex; align-items:center; gap:10px;">
+                    <i class="fa-brands fa-tiktok" style="color:#fff; font-size:1.3rem;"></i>
+                    <strong>تيك توك</strong>
+                </div>
+                <a href="https://www.tiktok.com/%40the_scouts_team?_r=1&_t=ZS-92Dk4AzUQSt" target="_blank" style="color:var(--accent-blue); text-decoration:none; font-weight:700;">انقر هنا</a>
+            </div>
+            <div class="social-item">
+                <div style="display:flex; align-items:center; gap:10px;">
+                    <i class="fa-brands fa-whatsapp" style="color:#25d366; font-size:1.3rem;"></i>
+                    <strong>التواصل مع القائد</strong>
+                </div>
+                <a href="https://wa.me/201271671271" target="_blank" style="color:var(--success); text-decoration:none; font-weight:700; direction:ltr;">01271671271</a>
+            </div>
+        </div>
+
+        <!-- الحقوق والتوقيع -->
+        <div style="text-align: center; padding: 20px 0 10px 0; color: var(--text-muted); font-size: 0.85rem; line-height: 1.6;">
+            <div style="font-weight: 700; color: var(--text-main); font-size: 0.95rem;">كشافة العذراء والانبا ابرام</div>
+            <div>© جميع الحقوق محفوظة</div>
+            <div style="font-size: 0.8rem; margin-top: 4px; color: var(--accent-blue);">قام باعداد الموقع الكشاف Mina.R.S</div>
+        </div>
+
+    </div>
+
+    <script>
+        const firebaseConfig = {
+          apiKey: "AIzaSyC_as9D16zvCFqKUIjizPcBx1VIqYqvqmc",
+          authDomain: "scout-app-ae.firebaseapp.com",
+          projectId: "scout-app-ae",
+          storageBucket: "scout-app-ae.firebasestorage.app",
+          messagingSenderId: "483335560223",
+          appId: "1:483335560223:web:b04d4d5486e3004812492a",
+          measurementId: "G-NMBYL5T0BZ"
+        };
+
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+        const db = firebase.firestore();
+
+        const COLLECTION_MAKHDOMIN = 'scout_makhdomin_v3';
+        const COLLECTION_ATTENDANCE = 'scout_attendance_v3';
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            
+            if (tabId === 'query') {
+                document.querySelectorAll('.tab-btn')[0].classList.add('active');
+                document.getElementById('tab-query').classList.add('active');
+            } else {
+                document.querySelectorAll('.tab-btn')[1].classList.add('active');
+                document.getElementById('tab-register').classList.add('active');
+            }
+        }
+
+        async function searchMember() {
+            const query = document.getElementById('search-input').value.trim().toLowerCase();
+            const container = document.getElementById('search-results');
+            container.innerHTML = '<p style="text-align:center; padding:15px; color:var(--text-muted);">جاري البحث...</p>';
+
+            if (!query) {
+                container.innerHTML = '<p style="text-align:center; padding:15px; color:var(--danger);">يرجى إدخال اسم أو رقم هاتف أو كود للبحث.</p>';
+                return;
+            }
+
+            try {
+                const makhdominSnap = await db.collection(COLLECTION_MAKHDOMIN).get();
+                const attendanceSnap = await db.collection(COLLECTION_ATTENDANCE).get();
+
+                const allAttendance = [];
+                attendanceSnap.forEach(doc => allAttendance.push(doc.data()));
+
+                const results = [];
+
+                makhdominSnap.forEach(doc => {
+                    const data = doc.data();
+                    const makhdomId = doc.id;
+
+                    const codeStr = String(data.code || '').trim();
+                    const nameStr = (data.name || '').toLowerCase();
+                    const phoneStr = (data.phone || '').trim();
+
+                    let isMatch = false;
+
+                    if (!isNaN(query)) {
+                        isMatch = (codeStr === query) || (phoneStr === query);
+                    } else {
+                        isMatch = nameStr.includes(query);
+                    }
+
+                    if (isMatch) {
+                        const userAttendances = allAttendance.filter(a => String(a.makhdomId) === String(makhdomId));
+                        const attendanceCount = userAttendances.length;
+
+                        let totalAbsence = 0;
+                        if (Array.isArray(data.eftiqadLogs)) {
+                            totalAbsence = data.eftiqadLogs.length;
+                        } else if (typeof data.absenceCount === 'number') {
+                            totalAbsence = data.absenceCount;
+                        }
+
+                        results.push({
+                            id: makhdomId,
+                            ...data,
+                            attendanceCount,
+                            absenceCount: totalAbsence
+                        });
+                    }
+                });
+
+                container.innerHTML = '';
+                if (results.length === 0) {
+                    container.innerHTML = '<p style="text-align:center; padding:15px; color:var(--text-muted);">لم يتم العثور على الشخص المطلوبة بياناته.</p>';
+                    return;
+                }
+
+                results.forEach(m => {
+                    container.innerHTML += `
+                        <div class="result-card">
+                            <h3 style="font-size:1.1rem;">${m.name}</h3>
+                            <p style="font-size:0.85rem; color:var(--text-muted);">المرحلة: ${m.stage}</p>
+                            
+                            <div class="code-box">
+                                <div style="font-size:0.8rem; opacity:0.9;">كود الكشافة الخاص بك</div>
+                                <div class="code-val">#${m.code}</div>
+                            </div>
+
+                            <div class="stats-row">
+                                <div class="stat-mini-card">
+                                    <div class="val" style="color:var(--success);">${m.attendanceCount}</div>
+                                    <div class="lbl">أيام الحضور</div>
+                                </div>
+                                <div class="stat-mini-card">
+                                    <div class="val" style="color:var(--warning);">${m.absenceCount}</div>
+                                    <div class="lbl">أيام الغياب</div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+
+            } catch (err) {
+                console.error(err);
+                container.innerHTML = '<p style="text-align:center; padding:15px; color:var(--danger);">حدث خطأ أثناء جلب البيانات.</p>';
+            }
+        }
+
+        async function handleRegistration(e) {
+            e.preventDefault();
+            const container = document.getElementById('register-success');
+            container.innerHTML = '<p style="text-align:center; padding:15px; color:var(--text-muted);">جاري حفظ البيانات وتوليد الكود...</p>';
+
+            const name = document.getElementById('reg-name').value.trim();
+            const stage = document.getElementById('reg-stage').value;
+            const dob = document.getElementById('reg-dob').value;
+            const phone = document.getElementById('reg-phone').value.trim();
+
+            try {
+                const snapshot = await db.collection(COLLECTION_MAKHDOMIN).get();
+                let maxCode = 0;
+                snapshot.forEach(doc => {
+                    const code = parseInt(doc.data().code) || 0;
+                    if (code > maxCode) maxCode = code;
+                });
+
+                const autoCode = maxCode + 1;
+
+                const newMember = {
+                    code: autoCode,
+                    name: name,
+                    stage: stage,
+                    dob: dob,
+                    phone: phone,
+                    eftiqadLogs: []
+                };
+
+                await db.collection(COLLECTION_MAKHDOMIN).add(newMember);
+
+                document.getElementById('register-form').reset();
+                container.innerHTML = `
+                    <div class="result-card" style="border-color:var(--success);">
+                        <div style="text-align:center; color:var(--success); font-weight:700; font-size:1.1rem; margin-bottom:10px;">
+                            <i class="fa-solid fa-circle-check"></i> تم التسجيل بنجاح!
+                        </div>
+                        <p style="text-align:center; font-size:0.9rem;">أهلاً بك <strong>${name}</strong> في فريق الكشافة.</p>
+                        <div class="code-box">
+                            <div style="font-size:0.8rem; opacity:0.9;">كودك الكشفي الجديد هو</div>
+                            <div class="code-val">#${autoCode}</div>
+                        </div>
+                        <p style="text-align:center; font-size:0.8rem; color:var(--text-muted);">احتفظ بهذا الكود لاستخدامه في الحضور والغياب.</p>
+                    </div>
+                `;
+
+            } catch (err) {
+                console.error(err);
+                container.innerHTML = '<p style="text-align:center; padding:15px; color:var(--danger);">حدث خطأ أثناء التسجيل. حاول مرة أخرى.</p>';
+            }
+        }
+    </script>
+</body>
+</html>
