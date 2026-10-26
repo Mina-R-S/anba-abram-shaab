@@ -1,0 +1,85 @@
+<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>بوابة الشعب والأعضاء - كشافة العذراء والأنبا أبرام</title><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"><link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet"><script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script><style>
+:root{--bg-dark:#0f172a;--card-bg:#1e293b;--card-border:#334155;--primary-blue:#2563eb;--accent-blue:#38bdf8;--text-main:#f8fafc;--text-muted:#94a3b8;--danger:#ef4444;--success:#10b981;--warning:#f59e0b}*{box-sizing:border-box;margin:0;padding:0;font-family:'Cairo',sans-serif}body{background:var(--bg-dark);color:var(--text-main);padding-bottom:40px}.header-bar{background:var(--card-bg);padding:14px 16px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--card-border);position:sticky;top:0;z-index:100}.header-title{font-size:1.1rem;font-weight:700;display:flex;align-items:center;gap:8px}.cover-banner{width:100%;background:linear-gradient(135deg,#1e3a8a,#0284c7);padding:24px 16px;text-align:center;border-radius:0 0 16px 16px;margin-bottom:20px;box-shadow:0 4px 20px rgba(0,0,0,.3)}.cover-banner h1{font-size:1.4rem;margin-bottom:4px}.cover-banner p{color:var(--accent-blue);font-size:.9rem;font-weight:600}.container{padding:0 16px;max-width:600px;margin:auto}.tab-buttons{display:flex;gap:10px;margin-bottom:20px}.tab-btn{flex:1;padding:12px;background:var(--card-bg);border:1px solid var(--card-border);color:var(--text-muted);border-radius:10px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px}.tab-btn.active{background:var(--primary-blue);color:#fff;border-color:var(--primary-blue)}.section-block{background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;padding:18px;margin-bottom:16px}.section-title{font-size:1rem;font-weight:700;margin-bottom:14px;display:flex;align-items:center;gap:8px}.form-group{margin-bottom:14px}.form-label{display:block;font-size:.85rem;color:var(--text-muted);margin-bottom:6px}.form-control,.form-select{width:100%;padding:11px 14px;background:var(--bg-dark);border:1px solid var(--card-border);border-radius:8px;color:var(--text-main);font-size:.95rem;outline:none}.form-control:focus,.form-select:focus{border-color:var(--accent-blue)}.btn{width:100%;padding:12px;border-radius:8px;border:0;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;font-size:.95rem}.btn-primary{background:var(--primary-blue);color:#fff}.result-card{background:var(--bg-dark);border:1px solid var(--card-border);border-radius:12px;padding:16px;margin-top:14px}.code-box{background:linear-gradient(135deg,#0284c7,#2563eb);padding:12px;border-radius:8px;text-align:center;margin:10px 0}.code-box .code-val{font-size:1.8rem;font-weight:800;letter-spacing:2px}.stats-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}.stat-mini-card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:8px;padding:12px;text-align:center}.stat-mini-card .val{font-size:1.3rem;font-weight:800}.stat-mini-card .lbl{font-size:.8rem;color:var(--text-muted)}.social-item{background:var(--bg-dark);border:1px solid var(--card-border);border-radius:8px;padding:12px;margin-top:8px;display:flex;justify-content:space-between;align-items:center}.tab-content{display:none}.tab-content.active{display:block}a{color:var(--accent-blue)}
+</style></head><body>
+<div class="header-bar"><div class="header-title"><i class="fa-solid fa-cross" style="color:var(--accent-blue)"></i>كشافة العذراء والأنبا أبرام</div><span id="cloud-status" style="font-size:.8rem;color:var(--accent-blue);font-weight:700">جاري الاتصال بالسحابة...</span></div>
+<div class="container"><div class="cover-banner"><h1>أهلاً بكم في كشافة السيدة العذراء والأنبا أبرام</h1><p>سجل بياناتك واستعلم عن الحضور وأيام الغياب</p></div><div class="tab-buttons"><button class="tab-btn active" onclick="switchTab('query')"><i class="fa-solid fa-magnifying-glass"></i> استعلام عن كودك</button><button class="tab-btn" onclick="switchTab('register')"><i class="fa-solid fa-user-plus"></i> تسجيل عضو جديد</button></div>
+<div id="tab-query" class="tab-content active"><div class="section-block"><div class="section-title"><i class="fa-solid fa-id-card" style="color:var(--accent-blue)"></i>استعلام عن الكود ومتابعة الحضور</div><div class="form-group"><label class="form-label">اكتب اسمك بالكامل أو الكود الرقمي</label><input type="text" id="search-input" class="form-control" placeholder="أدخل الاسم أو الكود بالتحديد..."></div><button class="btn btn-primary" id="search-btn" onclick="searchMember()"><i class="fa-solid fa-search"></i> بحث</button><div id="search-results"></div></div></div>
+<div id="tab-register" class="tab-content"><div class="section-block"><div class="section-title"><i class="fa-solid fa-pen-to-square" style="color:var(--success)"></i>استمارة تسجيل في الكشافة</div><form id="register-form" onsubmit="handleRegistration(event)"><div class="form-group"><label class="form-label">الاسم بالكامل (ثلاثي أو رباعي) *</label><input type="text" id="reg-name" class="form-control" required placeholder="اكتب اسمك الثلاثي/الرباعي"></div><div class="form-group"><label class="form-label">المرحلة الكشفية *</label><select class="form-select" id="reg-stage" required><option value="براعم">براعم</option><option value="أشبال (أ)">أشبال (أ)</option><option value="أشبال (ب)">أشبال (ب)</option><option value="كشاف">كشاف</option><option value="متقدم">متقدم</option><option value="جوالة">جوالة</option></select></div><div class="form-group"><label class="form-label">تاريخ الميلاد *</label><input type="date" id="reg-dob" class="form-control" required></div><div class="form-group"><label class="form-label">رقم الهاتف / رقم ولي الأمر *</label><input type="tel" id="reg-phone" class="form-control" required placeholder="01xxxxxxxx"></div><button type="submit" class="btn btn-primary" id="register-btn" style="background-color:var(--success)"><i class="fa-solid fa-check-circle"></i> تأكيد التسجيل</button></form><div id="register-success"></div></div></div>
+<div class="section-block"><div class="section-title"><i class="fa-solid fa-share-nodes" style="color:var(--accent-blue)"></i>تابعنا على منصاتنا</div><div class="social-item"><div><i class="fa-brands fa-facebook" style="color:#1877f2;font-size:1.3rem"></i> <strong>فيسبوك</strong></div><a href="https://www.facebook.com/share/19qm95uffo/" target="_blank">انقر هنا</a></div><div class="social-item"><div><i class="fa-brands fa-instagram" style="color:#e4405f;font-size:1.3rem"></i> <strong>إنستغرام</strong></div><a href="https://www.instagram.com/the_scout.team?igsi=MW8wMmNjYngyd3hzdg==" target="_blank">انقر هنا</a></div><div class="social-item"><div><i class="fa-brands fa-tiktok" style="color:#fff;font-size:1.3rem"></i> <strong>تيك توك</strong></div><a href="https://www.tiktok.com/%40the_scouts_team?_r=1&_t=ZS-92Dk4AzUQSt" target="_blank">انقر هنا</a></div><div class="social-item"><div><i class="fa-brands fa-whatsapp" style="color:#25d366;font-size:1.3rem"></i> <strong>التواصل مع القائد</strong></div><a href="https://wa.me/201271671271" target="_blank" style="color:var(--success);direction:ltr">01271671271</a></div></div><div style="text-align:center;padding:20px 0 10px;color:var(--text-muted);font-size:.85rem;line-height:1.6"><div style="font-weight:700;color:var(--text-main);font-size:.95rem">كشافة العذراء والانبا ابرام</div><div>© جميع الحقوق محفوظة</div><div style="font-size:.8rem;margin-top:4px;color:var(--accent-blue)">قام باعداد الموقع الكشاف Mina.R.S</div></div></div>
+<script>
+const firebaseConfig={apiKey:"AIzaSyC_as9D16zvCFqKUIjizPcBx1VIqYqvqmc",authDomain:"scout-app-ae.firebaseapp.com",projectId:"scout-app-ae",storageBucket:"scout-app-ae.firebasestorage.app",messagingSenderId:"483335560223",appId:"1:483335560223:web:b04d4d5486e3004812492a",measurementId:"G-NMBYL5T0BZ"};if(!firebase.apps.length)firebase.initializeApp(firebaseConfig);const db=firebase.firestore();
+const M='scout_makhdomin_v3',P='scout_phones_v3',A='scout_attendance_v3',E='scout_eftiqad_v1',COUNTER='scout_settings/makhdomin_counter';
+const esc=v=>String(v??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;');
+function switchTab(t){document.querySelectorAll('.tab-btn').forEach((b,i)=>b.classList.toggle('active',(t==='query'&&i===0)||(t==='register'&&i===1)));document.querySelectorAll('.tab-content').forEach(x=>x.classList.remove('active'));document.getElementById('tab-'+t).classList.add('active')}
+function status(ok){const x=document.getElementById('cloud-status');x.textContent=ok?'متصل بالسحابة':'تعذر الاتصال بالسحابة';x.style.color=ok?'var(--accent-blue)':'var(--danger)'}
+db.collection(M).limit(1).get().then(()=>status(true)).catch(()=>status(false));
+
+async function findMembers(q){
+  q=q.trim().toLowerCase();
+  if(!q)return[];
+  const r=db.collection(M),out=[],seen=new Set();
+  if(/^\d+$/.test(q)){
+    const [cn,cs]=await Promise.all([r.where('code','==',Number(q)).limit(10).get(),r.where('code','==',q).limit(10).get()]);
+    [...cn.docs,...cs.docs].forEach(d=>{if(!seen.has(d.id)){seen.add(d.id);out.push({id:d.id,...d.data()})}});
+  }else{
+    const s=await r.get();
+    s.forEach(d=>{const x=d.data();if(String(x.name||'').toLowerCase().includes(q))out.push({id:d.id,...x})});
+  }
+  return out.slice(0,20);
+}
+
+function currentMonthRange(){const now=new Date(),start=new Date(now.getFullYear(),now.getMonth(),1),end=new Date(now.getFullYear(),now.getMonth()+1,0),next=new Date(now.getFullYear(),now.getMonth()+1,1);const key=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;return {startDate:key(start),endDate:key(end),startMs:start.getTime(),endMs:next.getTime()}}
+
+async function searchMember(){
+  const q=document.getElementById('search-input').value.trim(),box=document.getElementById('search-results'),btn=document.getElementById('search-btn');
+  if(!q){box.innerHTML='<p style="text-align:center;padding:15px;color:var(--danger)">يرجى إدخال اسم أو كود للبحث.</p>';return}
+  btn.disabled=true;box.innerHTML='<p style="text-align:center;padding:15px;color:var(--text-muted)">جاري البحث...</p>';
+  try{
+    const ms=await findMembers(q);
+    if(!ms.length){box.innerHTML='<p style="text-align:center;padding:15px;color:var(--text-muted)">لم يتم العثور على الشخص المطلوب.</p>';return}
+    const range=currentMonthRange();
+    const cards=await Promise.all(ms.map(async m=>{
+      const [as,es]=await Promise.all([db.collection(A).where('makhdomId','==',m.id).get(),db.collection(E).where('makhdomId','==',m.id).get()]);
+      const attendanceCount=as.docs.filter(d=>{const date=d.data().date;return date>=range.startDate&&date<=range.endDate}).length;
+      const eftiqadCount=es.docs.filter(d=>{const x=d.data();if(x.recordType==='action')return false;if(x.recordType==='absence')return x.date>=range.startDate&&x.date<=range.endDate;const ts=Number(x.timestamp);return ts>=range.startMs&&ts<range.endMs}).length;
+      return `<div class="result-card"><h3 style="font-size:1.1rem">${esc(m.name)}</h3><p style="font-size:.85rem;color:var(--text-muted)">المرحلة: ${esc(m.stage)}</p><div class="code-box"><div style="font-size:.8rem;opacity:.9">كود الكشافة الخاص بك</div><div class="code-val">#${esc(m.code)}</div></div><p style="text-align:center;color:var(--accent-blue);font-size:.85rem;margin-top:8px">إحصائيات شهر ${new Intl.DateTimeFormat('ar-EG',{month:'long',year:'numeric'}).format(new Date())}</p><div class="stats-row"><div class="stat-mini-card"><div class="val" style="color:var(--success)">${attendanceCount}</div><div class="lbl">أيام الحضور هذا الشهر</div></div><div class="stat-mini-card"><div class="val" style="color:var(--warning)">${eftiqadCount}</div><div class="lbl">مرات الغياب هذا الشهر</div></div></div><p style="font-size:.75rem;color:var(--text-muted);text-align:center;margin-top:10px">الإحصائيات تخص الشهر الحالي فقط.</p></div>`;
+    }));
+    box.innerHTML=cards.join('');
+  }catch(e){
+    console.error(e);
+    box.innerHTML='<p style="text-align:center;padding:15px;color:var(--danger)">حدث خطأ أثناء جلب البيانات.</p>';
+  }finally{
+    btn.disabled=false;
+  }
+}
+
+async function handleRegistration(ev){
+  ev.preventDefault();
+  const btn=document.getElementById('register-btn'),box=document.getElementById('register-success');
+  if(btn.disabled)return;
+  btn.disabled=true;box.innerHTML='<p style="text-align:center;padding:15px;color:var(--text-muted)">جاري حفظ البيانات وتوليد الكود...</p>';
+  const name=document.getElementById('reg-name').value.trim(),stage=document.getElementById('reg-stage').value,dob=document.getElementById('reg-dob').value,phone=document.getElementById('reg-phone').value.trim();
+  try{
+    const maxSnap=await db.collection(M).orderBy('code','desc').limit(1).get();
+    const highestExistingCode=maxSnap.empty?0:(parseInt(maxSnap.docs[0].data().code,10)||0);
+    const code=await db.runTransaction(async tx=>{
+      const cr=db.doc(COUNTER),cd=await tx.get(cr);
+      const counterCode=cd.exists?(parseInt(cd.data().lastCode,10)||0):0;
+      const n=Math.max(highestExistingCode,counterCode)+1;
+      const mr=db.collection(M).doc();
+      const mId=mr.id;
+      tx.set(cr,{lastCode:n},{merge:true});
+      tx.set(mr,{code:n,name,stage,dob,lastAttendanceDate:null,createdAt:firebase.firestore.FieldValue.serverTimestamp()});
+      tx.set(db.collection(P).doc(mId),{phone,makhdomId:mId});
+      return n;
+    });
+    document.getElementById('register-form').reset();
+    box.innerHTML=`<div class="result-card" style="border-color:var(--success)"><div style="text-align:center;color:var(--success);font-weight:700;font-size:1.1rem;margin-bottom:10px"><i class="fa-solid fa-circle-check"></i> تم التسجيل بنجاح!</div><p style="text-align:center;font-size:.9rem">أهلاً بك <strong>${esc(name)}</strong> في فريق الكشافة.</p><div class="code-box"><div style="font-size:.8rem;opacity:.9">كودك الكشفي الجديد هو</div><div class="code-val">#${code}</div></div><p style="text-align:center;font-size:.8rem;color:var(--text-muted)">احتفظ بهذا الكود لاستخدامه في الحضور والغياب.</p></div>`;
+  }catch(e){
+    console.error(e);
+    box.innerHTML='<p style="text-align:center;padding:15px;color:var(--danger)">حدث خطأ أثناء التسجيل.</p>';
+  }finally{
+    btn.disabled=false;
+  }
+}
+</script></body></html>
